@@ -27,7 +27,11 @@ class Item(Base):
 
     id = Column(Integer, primary_key=True)
     name = Column(String(80), nullable=False)
-    price = Column(Numeric(12,2), default=0)
+    # price will be stored in cents with the app handling converting to dollars.
+    # This allow us to use Integer type. Decimal is not being used due to compiler
+    # warnings about lack of native Decimal support. This also makes the database
+    # more flexible for different currencies.
+    price = Column(Integer, default=0)
     description = Column(String(250))
     num_avail = Column(Integer, default=0)
     image = Column(String(120))

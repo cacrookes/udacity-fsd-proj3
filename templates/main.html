@@ -39,9 +39,9 @@
               <p>
                 {{item.description}}
               </p>
-              <span>${{item.price}}</span>
+              <span>${{ Decimal(item.price / 100).quantize(Decimal('.01'), rounding=ROUND_DOWN) }}</span>
             </div>
-          
+
         </article></a>
       {% endfor %}
     </main>
