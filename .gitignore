@@ -1,0 +1,12 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+
+# Rope
+.ropeproject
+
+#Mac files
+.DS_Store
+
+#database
+*.db

@@ -1,0 +1,44 @@
+<html>
+<head>
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/styles.css') }}">
+</head>
+<body>
+  <header>
+    <h1 role='banner'><a href="{{ url_for('mainPage') }}">The Hockey Shop</a></h1>
+  </header>
+  <nav>
+    <ul>
+      {% for category in categories %}
+        <li><a href="{{ url_for('showCategory', category_name = category.name)}}">{{category.name}}</a></li>
+      {% endfor %}
+    </ul>
+  </nav>
+  <main>
+    <header>
+      <h1>{{category}}</h1>
+    </header>
+    {% for item in items %}
+    <a href="{{url_for('showItem',category_name=item.category.name, item_id=item.id)}}">
+      <article class='item-preview clearfix'>
+
+        <h3>{{item.name}}</h3>
+        <figure>
+          <!-- check to see if item has an image. If not, display "no image" icon. -->
+          {% if item.image=="" %}
+            {% set image="no_image.png" %}
+          {% else %}
+            {% set image=item.image %}
+          {% endif %}
+          <img src="{{ url_for('static', filename='images/'+image)}}" alt="{{item.name}}" width="200">
+        </figure>
+        <p>
+          {{item.description}}
+        </p>
+        <span>${{item.price}}</span>
+
+      </article>
+    </a>
+    {% endfor %}
+  </main>
+</body>
+</html>
