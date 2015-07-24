@@ -31,7 +31,7 @@
         <p>
           {{item.description}}
         </p>
-        <div id="price">Price: ${{item.price}}</div>
+        <div id="price">Price: ${{item.price/100}}</div>
         <!-- check if quantities are low. Display not if low or sold-out -->
         {% if item.num_avail > 5 %}
           <div class="inStock">In Stock!</div>

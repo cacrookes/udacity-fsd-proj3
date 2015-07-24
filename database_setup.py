@@ -32,9 +32,9 @@ class Item(Base):
     # warnings about lack of native Decimal support. This also makes the database
     # more flexible for different currencies.
     price = Column(Integer, default=0)
-    description = Column(String(250))
+    description = Column(String(250), default="")
     num_avail = Column(Integer, default=0)
-    image = Column(String(120))
+    image = Column(String(120), default="")
     category_id = Column(Integer, ForeignKey('category.id'))
     category = relationship(Category)
 

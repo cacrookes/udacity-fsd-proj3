@@ -130,7 +130,7 @@ session.add(category4)
 session.commit()
 
 gpad1 = Item(   name="Bauer Reactor 9000",
-                price=13000,
+                price=13001,
                 description="Designed for goalies who rely on their quickness and agility, the REACTOR pads are lightweight, flexible and more durable than ever with the AX SUEDE QUATTRO+ knee landing and leg channel, plus the unique Pro Core insert.",
                 num_avail=1,
                 image="reactor9000.png",

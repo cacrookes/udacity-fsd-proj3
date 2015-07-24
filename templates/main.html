@@ -22,7 +22,7 @@
         <h1>Latest Arrivals</h1>
       </header>
       {% for item in items %}
-<a href="{{url_for('showItem',category_name=item.category.name, item_id=item.id)}}">
+      <a href="{{url_for('showItem',category_name=item.category.name, item_id=item.id)}}">
         <article class='item-preview clearfix'>
 
             <figure>
@@ -39,7 +39,7 @@
               <p>
                 {{item.description}}
               </p>
-              <span>${{ Decimal(item.price / 100).quantize(Decimal('.01'), rounding=ROUND_DOWN) }}</span>
+              <span>${{ item.price/100 }}</span>
             </div>
 
         </article></a>

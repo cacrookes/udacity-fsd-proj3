@@ -1,5 +1,4 @@
 from flask import Flask, render_template, request, redirect, url_for, jsonify
-from decimal import *
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from database_setup import Base, Item, Category
@@ -58,7 +57,7 @@ def newItem():
 
         # Convert price from dollars to cents. Database stores price as integer instead
         # of decimal due to compiler warnings of lack of native decimal support
-        cents = request.form['price'] * 100
+        cents = float(request.form['price']) * 100
         newItem = Item( name=request.form['name'],
                         description=request.form['description'],
                         price=cents,
