@@ -1,6 +1,7 @@
 import os
 import sys
-from sqlalchemy import Column, ForeignKey, Integer, String, Numeric
+import datetime
+from sqlalchemy import Column, ForeignKey, Integer, String, DateTime
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 from sqlalchemy import create_engine
@@ -35,6 +36,7 @@ class Item(Base):
     description = Column(String(250), default="")
     num_avail = Column(Integer, default=0)
     image = Column(String(120), default="")
+    date_added = Column(DateTime, default=datetime.datetime.utcnow)
     category_id = Column(Integer, ForeignKey('category.id'))
     category = relationship(Category)
 
@@ -47,6 +49,7 @@ class Item(Base):
             'description': self.description,
             'num_avail': self.num_avail,
             'image': self.image,
+            'date_added': self.date_added,
         }
 
 

@@ -52,7 +52,7 @@ def catalogJSON():
 @app.route('/')
 def mainPage():
     categories = session.query(Category).all()
-    items = session.query(Item).all()
+    items = session.query(Item).order_by(Item.date_added.desc()).all()
     return render_template('main.html', categories=categories, items=items)
 
 # List all the items available in the category
