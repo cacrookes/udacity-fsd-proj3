@@ -29,8 +29,9 @@
           <input type="number" id="numAvail" name="numAvail" min=0 />
         </p>
         <p>
+          <div id='thumbnails'></div>
           <label for="image">Image:</label>
-          <input type="file" id="image" name="image" />
+          <input type="file" id="image" name="image" onchange="previewImage(this.files);" />
         </p>
         <p>
           <label for="category">Category</label>
@@ -48,5 +49,22 @@
   <footer>
     Copyright Christopher Crookes 2015
   </footer>
+  <script>
+    // when user selects an image, preview it for them
+    var container = document.getElementById("thumbnails");
+    function previewImage(files) {
+      // remove previous contents
+      container.innerHTML = '';
+      var f = files[0];
+      var reader = new FileReader();
+      reader.onload = function(e) {
+        var img = document.createElement("img");
+        img.src = e.target.result;
+        img.width = 150;
+        container.appendChild(img);
+      }
+      reader.readAsDataURL(f);
+    }
+  </script>
 </body>
 </html>
