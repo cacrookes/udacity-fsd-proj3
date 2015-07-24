@@ -73,7 +73,7 @@ def newItem():
                         num_avail=request.form['numAvail'],
                         image=image_name,
                         category_id=category_id)
-        #TODO: add image logic
+
         session.add(newItem)
         session.commit()
         return redirect(url_for('mainPage'))
@@ -86,13 +86,39 @@ def newItem():
 def editItem(item_id):
     editedItem = session.query(Item).filter_by(id=item_id).one()
     if request.method == 'POST':
-        #TODO: check if category exists. If not, add it to the database
-        #TODO: update editItem with values from form
+
+        if request.form['name']:
+            editedItem.name = request.form['name']
+        if request.form['description']:
+            editedItem.description = request.form['description']
+        if request.form['price']:
+            # Convert price from dollars to cents. Database stores price as integer instead
+            # of decimal due to compiler warnings of lack of native decimal support
+            editedItem.price = float(request.form['price']) * 100
+        if request.form['numAvail']:
+            editedItem.num_avail = request.form['numAvail']
+        if request.form['category']:
+            # Check if category exists. If not, add it to the database. Get category id.
+            editedItem.category_id = categoryCheck(request.form['category'])
+
+        # Upload the image and get filename
+        image = request.files['image']
+        if image:
+            image_name = image.filename
+            #check if image has changed
+            if editedItem.image != image_name:
+                # delete old file if it exists
+                if editedItem.image != "":
+                    os.remove(os.path.join('uploads/', editedItem.image))
+                image.save(os.path.join('uploads/', image_name))
+                editedItem.image = image_name
+
         session.add(editedItem)
         session.commit()
         return redirect(url_for('mainPage'))
     else:
-        return render_template('editItem.html', item=editedItem)
+        categories = session.query(Category).all()
+        return render_template('editItem.html', item=editedItem, categories=categories)
 
 # Confirmation page for deleting a specified item
 @app.route('/<int:item_id>/delete/', methods=['GET', 'POST'])
