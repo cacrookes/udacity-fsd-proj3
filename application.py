@@ -1,4 +1,6 @@
 import os
+import json
+import collections
 from flask import Flask, render_template, request, redirect, url_for, jsonify, send_from_directory
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -26,6 +28,25 @@ def categoryCheck(category_name):
         # get id of new category
         return session.query(Category).filter_by(name=category_name).one().id
 
+# JSON endpoint to serve JSON data
+@app.route('/catalog.json')
+def catalogJSON():
+    categories = []
+    category_objects = session.query(Category).all()
+    # go through each category, and build an object for each category, including
+    # an object representing all items in the category
+    for c in category_objects:
+        items = session.query(Item).filter_by(category_id = c.id).all()
+        category = collections.OrderedDict()
+        category['id'] = c.id
+        category['name'] = c.name
+        # assign serialized list of all items belong to category to 'item' property
+        category['item'] = [i.serialize for i in items]
+        categories.append(category)
+    catalog = {
+        'Category': categories
+    }
+    return jsonify(catalog)
 
 # Home page, listing newest items and categories for navigation
 @app.route('/')

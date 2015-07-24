@@ -43,7 +43,7 @@ class Item(Base):
         return {
             'id': self.id,
             'name': self.name,
-            'price': self.price,
+            'price_cents': self.price,
             'description': self.description,
             'num_avail': self.num_avail,
             'image': self.image,
