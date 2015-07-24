@@ -1,7 +1,9 @@
 import os
 import json
 import collections
+from urlparse import urljoin
 from flask import Flask, render_template, request, redirect, url_for, jsonify, send_from_directory
+from werkzeug.contrib.atom import AtomFeed
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from database_setup import Base, Item, Category
@@ -28,6 +30,10 @@ def categoryCheck(category_name):
         # get id of new category
         return session.query(Category).filter_by(name=category_name).one().id
 
+# create an absolute url for external services.
+def external_url(url):
+    return urljoin(request.url_root, url)
+
 # JSON endpoint to serve JSON data
 @app.route('/catalog.json')
 def catalogJSON():
@@ -47,6 +53,19 @@ def catalogJSON():
         'Category': categories
     }
     return jsonify(catalog)
+
+# Atom Feed to return list of the most recently added items
+@app.route('/recent_items.atom')
+def atom_feed():
+    feed = AtomFeed('Newest Items at The Hockey Shop', feed_url=request.url, url=request.url_root)
+    items = session.query(Item).order_by(Item.date_added.desc()).limit(20).all()
+    for item in items:
+        feed.add(item.name,
+                 item.description,
+                 content_type='text',
+                 url=external_url(url_for('showItem',category_name=item.category.name, item_id=item.id)),
+                 updated=item.date_added)
+    return feed.get_response()
 
 # Home page, listing newest items and categories for navigation
 @app.route('/')
