@@ -125,6 +125,9 @@ def editItem(item_id):
 def deleteItem(item_id):
     itemToDelete = session.query(Item).filter_by(id=item_id).one()
     if request.method == 'POST':
+        # if item had image, delete image from server
+        if itemToDelete.image != "":
+            os.remove(os.path.join('uploads/', itemToDelete.image))
         session.delete(itemToDelete)
         session.commit()
         return redirect(url_for('mainPage'))
