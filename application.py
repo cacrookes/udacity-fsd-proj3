@@ -1,4 +1,5 @@
-from flask import Flask, render_template, request, redirect, url_for, jsonify
+import os
+from flask import Flask, render_template, request, redirect, url_for, jsonify, send_from_directory
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from database_setup import Base, Item, Category
@@ -58,10 +59,19 @@ def newItem():
         # Convert price from dollars to cents. Database stores price as integer instead
         # of decimal due to compiler warnings of lack of native decimal support
         cents = float(request.form['price']) * 100
+
+        # Upload the image and get filename
+        image = request.files['image']
+        image_name = ""
+        if image:
+            image_name = image.filename
+            image.save(os.path.join('uploads/', image_name))
+
         newItem = Item( name=request.form['name'],
                         description=request.form['description'],
                         price=cents,
                         num_avail=request.form['numAvail'],
+                        image=image_name,
                         category_id=category_id)
         #TODO: add image logic
         session.add(newItem)
@@ -95,6 +105,9 @@ def deleteItem(item_id):
     else:
         return render_template('deleteItem.html', item=itemToDelete)
 
+@app.route('/uploads/<filename>')
+def uploaded_file(filename):
+    return send_from_directory('uploads/', filename)
 
 if __name__ == '__main__':
         app.debug = True

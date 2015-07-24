@@ -29,7 +29,7 @@
           {% else %}
             {% set image=item.image %}
           {% endif %}
-          <img src="{{ url_for('static', filename='images/'+image)}}" alt="{{item.name}}" width="200">
+          <img src="{{ url_for('uploaded_file', filename=image)}}" alt="{{item.name}}" width="200">
         </figure>
         <p>
           {{item.description}}
