@@ -12,6 +12,19 @@
       <header id="banner">
         <h1 role='banner'><a href="{{ url_for('mainPage') }}">The Hockey Shop</a></h1>
       </header>
+
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+          <div class="flash">
+            <ul>
+              {% for message in messages %}
+                <li> <strong> {{ message }} </strong> </li>
+              {% endfor %}
+            </ul>
+          </div>
+          {% endif %}
+        {% endwith %}
+      
       <div id="maincontent" class="container">
 
           {% block content %}

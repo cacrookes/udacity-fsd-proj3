@@ -9,11 +9,11 @@
     <script src="https://apis.google.com/js/client:platform.js?onload=start" async defer></script>
   </head>
   <body>
-    <header>
+    <header id="banner">
       <h1 role='banner'><a href="{{ url_for('mainPage') }}">The Hockey Shop</a></h1>
     </header>
-    <div id="content">
-      <p>
+    <div id="loginPage">
+      <p id="loginInstructions">
         Please login using one of the following services:
       </p>
 
@@ -36,6 +36,7 @@
         if (authResult['code']){
           // Hide the sign-in button once user is authorized
           $('#signinButton').attr('style', 'display: none');
+          $('#loginInstructions').attr('style', 'display: none');
 
           // Send the one-time-use code to the server.
           // If the server responds, write confirmation message and redirect to main page

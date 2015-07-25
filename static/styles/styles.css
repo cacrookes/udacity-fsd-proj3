@@ -90,6 +90,17 @@ a.button:active {
   color: #CC0000;
 }
 
+.flash{
+  background-color: yellow;
+  margin-top: -3em;
+  padding: 1em;
+  font-size: 1.3em;
+}
+
+.flash ul{
+  list-style: none;
+}
+
 #maincontent{
   overflow: auto;
   padding-bottom: 6em;
@@ -175,4 +186,9 @@ article.item-preview .item-details h3{
   width: 150px;
   float: left;
   margin-top: 3px;
+}
+
+#loginPage{
+  font-size: 1.5em;
+  text-align: center;
 }

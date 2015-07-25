@@ -155,8 +155,7 @@ def gconnect():
     output += '<img src="'
     output += login_session['picture']
     output += ' " style = "width: 300px; height: 300px;border-radius: 150px;-webkit-border-radius: 150px;-moz-border-radius: 150px;"> '
-    flash("you are now logged in as %s" % login_session['username'])
-    print "done!"
+    flash("You are now logged in as %s" % login_session['username'])
     return output
 
 # DISCONNECT - Revoke a current user's token and reset their login_session
@@ -181,9 +180,8 @@ def gdisconnect():
         del login_session['email']
         del login_session['picture']
 
-        response = make_response(json.dumps('Successfully disconnected.'), 200)
-        response.headers['Content-Type'] = 'application/json'
-        return response
+        flash("You have been successfully disconnected.")
+        return redirect("/")
     else:
         # For whatever reason, the given token was invalid.
         response = make_response(json.dumps('Failed to revoke token for given user.', 400))
@@ -243,6 +241,7 @@ def newItem():
 
         session.add(newItem)
         session.commit()
+        flash("Succesfully added %s" % newItem.name)
         return redirect(url_for('mainPage'))
     else:
         categories = session.query(Category).all()
@@ -285,6 +284,7 @@ def editItem(item_id):
 
         session.add(editedItem)
         session.commit()
+        flash("Successfully updated %s" % editedItem.name)
         return redirect(url_for('showItem', category_name=editedItem.category.name, item_id=item_id))
     else:
         categories = session.query(Category).all()
@@ -303,6 +303,7 @@ def deleteItem(item_id):
             os.remove(os.path.join('uploads/', itemToDelete.image))
         session.delete(itemToDelete)
         session.commit()
+        flash("Successfully delete %s" % itemToDelete.name)
         return redirect(url_for('mainPage'))
     else:
         return render_template('deleteItem.html', item=itemToDelete)
