@@ -17,9 +17,11 @@
         {% endfor %}
       </ul>
     </nav>
-    <div id="admin">
-      <a href="{{url_for('newItem')}}">Add Item</a>
-    </div>
+    {% if loggedIn %}
+      <div id="admin">
+        <a href="{{url_for('newItem')}}">Add Item</a>
+      </div>
+    {% endif %}
     <main>
       <header>
         <h1>Latest Arrivals</h1>

@@ -159,13 +159,46 @@ def gconnect():
     print "done!"
     return output
 
+# DISCONNECT - Revoke a current user's token and reset their login_session
+@app.route('/gdisconnect')
+def gdisconnect():
+    # Only disconnect a connected user.
+    credentials = login_session.get('credentials')
+    if credentials is None:
+        response = make_response(json.dumps('Current user not connected.'), 401)
+        response.headers['Content-Type'] = 'application/json'
+        return response
+
+    url = 'https://accounts.google.com/o/oauth2/revoke?token=%s' % credentials
+    h = httplib2.Http()
+    result = h.request(url, 'GET')[0]
+
+    if result['status'] == '200':
+        # Reset the user's sesson.
+        del login_session['credentials']
+        del login_session['gplus_id']
+        del login_session['username']
+        del login_session['email']
+        del login_session['picture']
+
+        response = make_response(json.dumps('Successfully disconnected.'), 200)
+        response.headers['Content-Type'] = 'application/json'
+        return response
+    else:
+        # For whatever reason, the given token was invalid.
+        response = make_response(json.dumps('Failed to revoke token for given user.', 400))
+        response.headers['Content-Type'] = 'application/json'
+        return response
+
 # Home page, listing newest items and categories for navigation
 @app.route('/catalog/')
 @app.route('/')
 def mainPage():
     categories = session.query(Category).all()
     items = session.query(Item).order_by(Item.date_added.desc()).limit(7)
-    return render_template('main.html', categories=categories, items=items)
+    # Check if we're logged in. This will affect what is displayed on the page.
+    loggedIn = True if 'username' in login_session else False
+    return render_template('main.html', categories=categories, items=items, loggedIn=loggedIn)
 
 # List all the items available in the category
 @app.route('/catalog/<category_name>/')
@@ -180,11 +213,16 @@ def showCategory(category_name):
 def showItem(category_name, item_id):
     item = session.query(Item).filter_by(id = item_id).one()
     categories = session.query(Category).all()
-    return render_template('item.html', item=item, categories=categories)
+    # Check if we're logged in. This will affect what is displayed on the page.
+    loggedIn = True if 'username' in login_session else False
+    return render_template('item.html', item=item, categories=categories, loggedIn=loggedIn)
 
 # Form for adding a new item
 @app.route('/admin/additem/', methods=['GET', 'POST'])
 def newItem():
+    # Check to make sure user is authorized to add item
+    if 'username' not in login_session:
+        return redirect('/login')
     if request.method == 'POST':
         # Check if category exists. If not, add it to the database. Get category id.
         category_id = categoryCheck(request.form['category'])
@@ -217,6 +255,9 @@ def newItem():
 # Form for updating the specified item
 @app.route('/admin/<int:item_id>/edit/', methods=['GET', 'POST'])
 def editItem(item_id):
+    # Check to make sure user is authorized to edit item
+    if 'username' not in login_session:
+        return redirect('login')
     editedItem = session.query(Item).filter_by(id=item_id).one()
     if request.method == 'POST':
 
@@ -256,6 +297,9 @@ def editItem(item_id):
 # Confirmation page for deleting a specified item
 @app.route('/admin/<int:item_id>/delete/', methods=['GET', 'POST'])
 def deleteItem(item_id):
+    # Check to make sure user is authorized to delete item
+    if 'username' not in login_session:
+        return redirect('login')
     itemToDelete = session.query(Item).filter_by(id=item_id).one()
     if request.method == 'POST':
         # if item had image, delete image from server

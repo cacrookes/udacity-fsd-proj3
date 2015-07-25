@@ -41,10 +41,12 @@
           <div class="soldOut">Sold Out :(</div>
         {% endif %}
       </article>
-      <div id="admin">
-        <a href="{{ url_for('editItem', item_id = item.id) }}">Edit Item</a>
-        <a href="{{ url_for('deleteItem', item_id = item.id) }}">Delete Item</a>
-      </div>
+      {% if loggedIn %}
+        <div id="admin">
+          <a href="{{ url_for('editItem', item_id = item.id) }}">Edit Item</a>
+          <a href="{{ url_for('deleteItem', item_id = item.id) }}">Delete Item</a>
+        </div>
+      {% endif %}
     </main>
   </div>
 </body>
