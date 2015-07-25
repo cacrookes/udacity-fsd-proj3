@@ -10,11 +10,13 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from database_setup import Base, Item, Category
 from oauth2client.client import flow_from_clientsecrets, FlowExchangeError
+from datetime import datetime, timedelta
 
 app = Flask(__name__)
 
 CLIENT_ID = json.loads(open('client_secrets.json', 'r').read())['web']['client_id']
 APPLICATION_NAME = "FSD Catalog App"
+UPLOADS_FOLDER = "uploads/"
 
 # Connect to Database and create database session
 engine = create_engine('sqlite:///hockeyshop.db')
@@ -132,9 +134,13 @@ def gconnect():
         response = make_response(json.dumps('Current user is already connected.'), 200)
         response.headers['Content-Type'] = 'application/json'
         return response
-
+    #print credentials.to_json()
     # Store the access token in the session for later use.
     login_session['credentials'] = credentials.access_token
+    # Grab the current time and length of time for the access token to determine when it expires
+    login_session['logintime'] = datetime.now()
+    login_session['access_length'] = credentials.token_response["expires_in"]
+
     login_session['gplus_id'] = gplus_id
 
     # Get user info
@@ -179,10 +185,15 @@ def gdisconnect():
         del login_session['username']
         del login_session['email']
         del login_session['picture']
+        del login_session['logintime']
+        del login_session['access_length']
 
         flash("You have been successfully disconnected.")
         return redirect("/")
     else:
+        print result
+        if (datetime.now() - login_session['logintime']) > time(seconds=login_session['access_length']):
+            print "Token has already expired"
         # For whatever reason, the given token was invalid.
         response = make_response(json.dumps('Failed to revoke token for given user.', 400))
         response.headers['Content-Type'] = 'application/json'
@@ -230,7 +241,7 @@ def newItem():
         image_name = ""
         if image:
             image_name = image.filename
-            image.save(os.path.join('uploads/', image_name))
+            image.save(os.path.join(UPLOADS_FOLDER, image_name))
 
         newItem = Item( name=request.form['name'],
                         description=request.form['description'],
@@ -278,8 +289,8 @@ def editItem(item_id):
             if editedItem.image != image_name:
                 # delete old file if it exists
                 if editedItem.image != "":
-                    os.remove(os.path.join('uploads/', editedItem.image))
-                image.save(os.path.join('uploads/', image_name))
+                    os.remove(os.path.join(UPLOADS_FOLDER, editedItem.image))
+                image.save(os.path.join(UPLOADS_FOLDER, image_name))
                 editedItem.image = image_name
 
         session.add(editedItem)
@@ -298,15 +309,22 @@ def deleteItem(item_id):
         return redirect('login')
     itemToDelete = session.query(Item).filter_by(id=item_id).one()
     if request.method == 'POST':
+        # verify nonce to help prevent cross-site request forgeries
+        if request.form["nonce"] != login_session["nonce"]:
+            flash("Error, could not delete %s" %itemToDelete.name)
+            return redirect(url_for('mainPage'))
+        del login_session["nonce"]
         # if item had image, delete image from server
         if itemToDelete.image != "":
-            os.remove(os.path.join('uploads/', itemToDelete.image))
+            os.remove(os.path.join(UPLOADS_FOLDER, itemToDelete.image))
         session.delete(itemToDelete)
         session.commit()
         flash("Successfully delete %s" % itemToDelete.name)
         return redirect(url_for('mainPage'))
     else:
-        return render_template('deleteItem.html', item=itemToDelete)
+        # create nonce to help protect from cross-site request forgeries
+        login_session["nonce"] = ''.join(random.choice('0123456789ABCDEF') for i in range(16))
+        return render_template('deleteItem.html', item=itemToDelete, nonce=login_session["nonce"])
 
 @app.route('/uploads/<filename>')
 def uploaded_file(filename):

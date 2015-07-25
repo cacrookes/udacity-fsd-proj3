@@ -188,6 +188,13 @@ article.item-preview .item-details h3{
   margin-top: 3px;
 }
 
+.item-form input:focus{
+  padding: 5px;
+}
+.item-form input{
+  transition: padding .25s
+}
+
 #loginPage{
   font-size: 1.5em;
   text-align: center;
