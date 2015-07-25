@@ -1,11 +1,11 @@
 {% extends "master.html" %}
 {% block content %}
   {% include "navlist.html" %}
-  <main>
+  <main class="col-md-10">
     <header>
       <h1>{{item.name}}</h2>
     </header>
-    <article>
+    <article class="item">
       <figure>
         <!-- check to see if item has an image. If not, display "no image" icon. -->
         {% if item.image=="" %}
@@ -13,25 +13,29 @@
         {% else %}
           {% set image=item.image %}
         {% endif %}
-        <img src="{{ url_for('uploaded_file', filename=image) }}" alt="{{item.name}}" width="200">
+        <img src="{{ url_for('uploaded_file', filename=image) }}" alt="{{item.name}}" width="400">
       </figure>
-      <p>
+      <p id="description">
         {{item.description}}
       </p>
-      <div id="price">Price: ${{item.price/100}}</div>
-      <!-- check if quantities are low. Display not if low or sold-out -->
-      {% if item.num_avail > 5 %}
-        <div class="inStock">In Stock!</div>
-      {% elif item.num_avail > 0 %}
-        <div class="limitedStock">Limited stock!</div>
-      {% else %}
-        <div class="soldOut">Sold Out :(</div>
-      {% endif %}
+      <p>
+        <span id="price">Price: ${{item.price/100}}</span>
+      </p>
+      <p>
+        <!-- check if quantities are low. Display not if low or sold-out -->
+        {% if item.num_avail > 5 %}
+          <span class="stock btn-success">In Stock!</span>
+        {% elif item.num_avail > 0 %}
+          <span class="stock btn-warning">Limited stock!</span>
+        {% else %}
+          <span class="stock btn-danger">Sold Out :(</span>
+        {% endif %}
+      </p>
     </article>
-    {% if loggedIn %}
-      <div id="admin">
-        <a href="{{ url_for('editItem', item_id = item.id) }}">Edit Item</a>
-        <a href="{{ url_for('deleteItem', item_id = item.id) }}">Delete Item</a>
+    {% if 'username' in session %}
+      <div id="item-admin">
+        <a class="button" href="{{ url_for('editItem', item_id = item.id) }}">Edit Item</a>
+        <a class="button" href="{{ url_for('deleteItem', item_id = item.id) }}">Delete Item</a>
       </div>
     {% endif %}
   </main>

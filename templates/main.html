@@ -1,37 +1,12 @@
 {% extends "master.html" %}
 {% block content %}
   {% include "navlist.html" %}
-  {% if loggedIn %}
-    <div id="admin">
-      <a href="{{url_for('newItem')}}">Add Item</a>
-    </div>
-  {% endif %}
-  <main>
+  <main class="col-md-10">
     <header>
       <h1>Latest Arrivals</h1>
     </header>
     {% for item in items %}
-    <a href="{{url_for('showItem',category_name=item.category.name, item_id=item.id)}}">
-      <article class='item-preview clearfix'>
-
-          <figure>
-            <!-- check to see if item has an image. If not, display "no image" icon. -->
-            {% if item.image=="" %}
-              {% set image="no_image.png" %}
-            {% else %}
-              {% set image=item.image %}
-            {% endif %}
-            <img src="{{ url_for('uploaded_file', filename=image)}}" alt="{{item.name}}" width="100">
-          </figure>
-          <div class='item-details'>
-            <h3>{{item.name}}</h3>
-            <p>
-              {{item.description}}
-            </p>
-            <span>${{ item.price/100 }}</span>
-          </div>
-
-      </article></a>
+      {% include "itempreview.html" %}
     {% endfor %}
   </main>
 {% endblock %}

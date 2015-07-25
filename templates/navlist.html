@@ -1,7 +1,16 @@
-<nav>
+<nav class="col-md-2">
+  <header>
+    <h3>Categories</h3>
+  </header>
   <ul>
     {% for category in categories %}
       <li><a href="{{ url_for('showCategory', category_name = category.name)}}">{{category.name}}</a></li>
     {% endfor %}
   </ul>
+  {% if 'username' in session %}
+    <a id="loginLink" class="button" href="{{ url_for('gdisconnect') }}">Logout</a><br>
+    <a class="button" href="{{url_for('newItem')}}">Add Item</a>
+  {% else %}
+    <a id="loginLink" class="button" href="{{ url_for('showLogin') }}">Login</a>
+  {% endif %}
 </nav>

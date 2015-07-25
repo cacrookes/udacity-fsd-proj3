@@ -196,9 +196,7 @@ def gdisconnect():
 def mainPage():
     categories = session.query(Category).all()
     items = session.query(Item).order_by(Item.date_added.desc()).limit(7)
-    # Check if we're logged in. This will affect what is displayed on the page.
-    loggedIn = True if 'username' in login_session else False
-    return render_template('main.html', categories=categories, items=items, loggedIn=loggedIn)
+    return render_template('main.html', categories=categories, items=items)
 
 # List all the items available in the category
 @app.route('/catalog/<category_name>/')
@@ -213,9 +211,7 @@ def showCategory(category_name):
 def showItem(category_name, item_id):
     item = session.query(Item).filter_by(id = item_id).one()
     categories = session.query(Category).all()
-    # Check if we're logged in. This will affect what is displayed on the page.
-    loggedIn = True if 'username' in login_session else False
-    return render_template('item.html', item=item, categories=categories, loggedIn=loggedIn)
+    return render_template('item.html', item=item, categories=categories)
 
 # Form for adding a new item
 @app.route('/admin/additem/', methods=['GET', 'POST'])
@@ -289,7 +285,7 @@ def editItem(item_id):
 
         session.add(editedItem)
         session.commit()
-        return redirect(url_for('mainPage'))
+        return redirect(url_for('showItem', category_name=editedItem.category.name, item_id=item_id))
     else:
         categories = session.query(Category).all()
         return render_template('editItem.html', item=editedItem, categories=categories)

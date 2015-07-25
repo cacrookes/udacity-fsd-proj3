@@ -1,31 +1,12 @@
 {% extends "master.html" %}
 {% block content %}
   {% include "navlist.html" %}
-  <main>
+  <main class="col-md-10">
     <header>
       <h1>{{category}}</h1>
     </header>
     {% for item in items %}
-    <a href="{{url_for('showItem',category_name=item.category.name, item_id=item.id)}}">
-      <article class='item-preview clearfix'>
-
-        <h3>{{item.name}}</h3>
-        <figure>
-          <!-- check to see if item has an image. If not, display "no image" icon. -->
-          {% if item.image=="" %}
-            {% set image="no_image.png" %}
-          {% else %}
-            {% set image=item.image %}
-          {% endif %}
-          <img src="{{ url_for('uploaded_file', filename=image)}}" alt="{{item.name}}" width="200">
-        </figure>
-        <p>
-          {{item.description}}
-        </p>
-        <span>${{item.price/100}}</span>
-
-      </article>
-    </a>
+      {% include "itempreview.html" %}
     {% endfor %}
   </main>
 {% endblock %}

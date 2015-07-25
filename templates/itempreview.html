@@ -1,0 +1,22 @@
+<a href="{{url_for('showItem',category_name=item.category.name, item_id=item.id)}}">
+  <article class='item-preview row'>
+
+      <figure class="col-sm-2">
+        <!-- check to see if item has an image. If not, display "no image" icon. -->
+        {% if item.image=="" %}
+          {% set image="no_image.png" %}
+        {% else %}
+          {% set image=item.image %}
+        {% endif %}
+        <img src="{{ url_for('uploaded_file', filename=image)}}" alt="{{item.name}}" width="100">
+      </figure>
+      <div class='item-details col-sm-10'>
+        <h3>{{item.name}}</h3>
+        <p>
+          {{item.description}}
+        </p>
+        <span>${{ item.price/100 }}</span>
+      </div>
+
+  </article>
+</a>
