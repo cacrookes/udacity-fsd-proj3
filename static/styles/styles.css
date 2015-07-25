@@ -1,3 +1,11 @@
+html, body{
+  height: 100%;
+}
+
+#wrapper{
+  min-height: 100%;
+}
+
 a:hover {
   text-decoration: none;
 }
@@ -82,12 +90,19 @@ a.button:active {
   color: #CC0000;
 }
 
+#maincontent{
+  overflow: auto;
+  padding-bottom: 6em;
+}
+
 footer {
-  /*clear: both;*/
+  clear: both;
   background: black;
   color: white;
   padding: 1em;
-  margin-top: 3em;
+  margin-top: -3em;
+  height: 3em;
+  position: relative;
 }
 
 nav ul{
