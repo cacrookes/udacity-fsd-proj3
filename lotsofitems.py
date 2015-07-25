@@ -9,6 +9,10 @@ Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
 
+#---------------------------------
+# Populate hockeyshop database
+#---------------------------------
+
 # Items in category Jerseys
 category1 = Category(name="Jerseys")
 session.add(category1)

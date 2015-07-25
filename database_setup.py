@@ -6,6 +6,11 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 from sqlalchemy import create_engine
 
+#----------------------------------------------------------------------
+# This app defines a database for a catalog app. App supports different
+# categories, with items belonging to different categories.
+#----------------------------------------------------------------------
+
 Base = declarative_base()
 
 # Defines categories
@@ -15,6 +20,7 @@ class Category(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String(80), unique=True)
 
+    # serialize table to make data json friendly
     @property
     def serialize(self):
         return {
@@ -40,6 +46,7 @@ class Item(Base):
     category_id = Column(Integer, ForeignKey('category.id'))
     category = relationship(Category)
 
+    # serialize table to make data json friendly
     @property
     def serialize(self):
         return {

@@ -1,7 +1,4 @@
 import os, json, collections, random, string, httplib2, requests
-#import json
-#import collections
-#import random, string
 from urlparse import urljoin
 from flask import Flask, render_template, request, redirect, url_for, jsonify, send_from_directory, make_response
 from flask import flash, session as login_session
@@ -14,8 +11,14 @@ from datetime import datetime, timedelta
 
 app = Flask(__name__)
 
+#---------------------------------------------------------------------------
+# This app provides routing and serves up a website catalog app with full
+# CRUD operations and a RESTFUL API
+#---------------------------------------------------------------------------
+
 CLIENT_ID = json.loads(open('client_secrets.json', 'r').read())['web']['client_id']
 APPLICATION_NAME = "FSD Catalog App"
+# set the folder where item images will be uploaded to
 UPLOADS_FOLDER = "uploads/"
 
 # Connect to Database and create database session
@@ -25,7 +28,7 @@ Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
 
-# checks to see if a category already exists. If not, category is added. Returns category id
+# checks to see if a category already exists. If not, category is added. Returns category id.
 def categoryCheck(category_name):
     if session.query(Category).filter_by(name=category_name).count():
         # category already exists
@@ -84,6 +87,7 @@ def showLogin():
     login_session['state'] = state
     return render_template('login.html', STATE=state)
 
+# Connect to the google oauth2 service for user authentication
 @app.route('/gconnect', methods=['POST'])
 def gconnect():
     # Validate state token
@@ -134,7 +138,7 @@ def gconnect():
         response = make_response(json.dumps('Current user is already connected.'), 200)
         response.headers['Content-Type'] = 'application/json'
         return response
-    #print credentials.to_json()
+
     # Store the access token in the session for later use.
     login_session['credentials'] = credentials.access_token
     # Grab the current time and length of time for the access token to determine when it expires
@@ -150,10 +154,12 @@ def gconnect():
 
     data = answer.json()
 
+    # store user data in session for later retrieval
     login_session['username'] = data['name']
     login_session['picture'] = data['picture']
     login_session['email'] = data['email']
 
+    # Generate html for welcome message to display on successful login
     output = ''
     output += '<h1>Welcome, '
     output += login_session['username']
