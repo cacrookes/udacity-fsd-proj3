@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>The Hockey Shop</title>
+    <link href="{{ url_for('atom_feed') }}" rel="alternate" title="Newest Items at The Hockey Shop" type="application/atom+xml">
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/styles.css') }}">
+  </head>
+  <body>
+    <header>
+      <h1 role='banner'><a href="{{ url_for('mainPage') }}">The Hockey Shop</a></h1>
+    </header>
+    <div id="content">
+
+        {% block content %}
+		  	{% endblock %}
+        
+    </div>
+    <footer>
+      Copyright Christopher Crookes 2015
+    </footer>
+  </body>
+</html>

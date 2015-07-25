@@ -1,58 +1,37 @@
-<html>
-<head>
+{% extends "master.html" %}
+{% block content %}
+  {% include "navlist.html" %}
+  {% if loggedIn %}
+    <div id="admin">
+      <a href="{{url_for('newItem')}}">Add Item</a>
+    </div>
+  {% endif %}
+  <main>
+    <header>
+      <h1>Latest Arrivals</h1>
+    </header>
+    {% for item in items %}
+    <a href="{{url_for('showItem',category_name=item.category.name, item_id=item.id)}}">
+      <article class='item-preview clearfix'>
 
-  <link href="{{ url_for('atom_feed') }}" rel="alternate" title="Newest Items at The Hockey Shop" type="application/atom+xml">
-  <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
-  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/styles.css') }}">
-</head>
-<body>
-  <header>
-    <h1 role='banner'><a href="{{ url_for('mainPage') }}">The Hockey Shop</a></h1>
-  </header>
-  <div id="content">
-    <nav>
-      <ul>
-        {% for category in categories %}
-          <li><a href="{{ url_for('showCategory', category_name = category.name)}}">{{category.name}}</a></li>
-        {% endfor %}
-      </ul>
-    </nav>
-    {% if loggedIn %}
-      <div id="admin">
-        <a href="{{url_for('newItem')}}">Add Item</a>
-      </div>
-    {% endif %}
-    <main>
-      <header>
-        <h1>Latest Arrivals</h1>
-      </header>
-      {% for item in items %}
-      <a href="{{url_for('showItem',category_name=item.category.name, item_id=item.id)}}">
-        <article class='item-preview clearfix'>
+          <figure>
+            <!-- check to see if item has an image. If not, display "no image" icon. -->
+            {% if item.image=="" %}
+              {% set image="no_image.png" %}
+            {% else %}
+              {% set image=item.image %}
+            {% endif %}
+            <img src="{{ url_for('uploaded_file', filename=image)}}" alt="{{item.name}}" width="100">
+          </figure>
+          <div class='item-details'>
+            <h3>{{item.name}}</h3>
+            <p>
+              {{item.description}}
+            </p>
+            <span>${{ item.price/100 }}</span>
+          </div>
 
-            <figure>
-              <!-- check to see if item has an image. If not, display "no image" icon. -->
-              {% if item.image=="" %}
-                {% set image="no_image.png" %}
-              {% else %}
-                {% set image=item.image %}
-              {% endif %}
-              <img src="{{ url_for('uploaded_file', filename=image)}}" alt="{{item.name}}" width="100">
-            </figure>
-            <div class='item-details'>
-              <h3>{{item.name}}</h3>
-              <p>
-                {{item.description}}
-              </p>
-              <span>${{ item.price/100 }}</span>
-            </div>
-
-        </article></a>
-      {% endfor %}
-    </main>
-  </div>
-  <footer>
-    Copyright Christopher Crookes 2015
-  </footer>
-</body>
-</html>
+      </article></a>
+    {% endfor %}
+  </main>
+{% endblock %}

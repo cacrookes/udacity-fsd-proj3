@@ -1,19 +1,6 @@
-<html>
-<head>
-  <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
-  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/styles.css') }}">
-</head>
-<body>
-  <header>
-    <h1 role='banner'><a href="{{ url_for('mainPage') }}">The Hockey Shop</a></h1>
-  </header>
-  <nav>
-    <ul>
-      {% for category in categories %}
-        <li><a href="{{ url_for('showCategory', category_name = category.name)}}">{{category.name}}</a></li>
-      {% endfor %}
-    </ul>
-  </nav>
+{% extends "master.html" %}
+{% block content %}
+  {% include "navlist.html" %}
   <main>
     <header>
       <h1>{{category}}</h1>
@@ -41,5 +28,4 @@
     </a>
     {% endfor %}
   </main>
-</body>
-</html>
+{% endblock %}
