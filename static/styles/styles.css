@@ -141,3 +141,23 @@ article.item-preview .item-details h3{
   border: 1px solid red;
   border-radius: 25px;
 }
+
+.item-form{
+  font-size: 1.2em;
+}
+
+.item-form ul{
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+.item-form li{
+  padding: 12px;
+}
+
+.item-form label{
+  width: 150px;
+  float: left;
+  margin-top: 3px;
+}
