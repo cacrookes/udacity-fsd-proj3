@@ -7,14 +7,16 @@ main {
   margin-left: 150px;
 }
 
-a {
+a:hover {
   text-decoration: none;
 }
 
 footer {
-  clear: both;
+  /*clear: both;*/
   background: black;
   color: white;
+  padding: 1em;
+  margin-top: 3em;
 }
 
 #content {
@@ -49,14 +51,14 @@ article.item-preview figure{
 }
 
 article.item-preview .item-details{
-  margin-left: 300px;
+  margin-left: 150px;
 }
 
-.clearfix:after {
+/*.clearfix:after {
 	visibility: hidden;
 	display: block;
 	font-size: 0;
 	content: " ";
 	clear: both;
 	height: 0;
-}
+}*/
