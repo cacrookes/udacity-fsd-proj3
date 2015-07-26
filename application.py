@@ -46,6 +46,25 @@ def categoryCheck(category_name):
         # get id of new category
         return session.query(Category).filter_by(name=category_name).one().id
 
+def deleteEmptyCategory(category_id):
+    """
+    Checks to see if a category has any items in it.
+    If not, category is deleted
+    """
+    print "In delete empty category"
+    # following will return None if no results are found
+    categoryItems = session.query(Item).filter_by(category_id=category_id).first()
+    if not categoryItems:
+        # no items in this category, so delete it!
+        categoryToDelete = session.query(Category).filter_by(id=category_id).one()
+        session.delete(categoryToDelete)
+        session.commit()
+        flash("Category %s was removed" % categoryToDelete.name)
+        return "Category deleted"
+    else:
+        # category still has items
+        return "Category was not deleted. It still contains items."
+
 def external_url(url):
     """
     Creates an absolute url for external services.
@@ -355,25 +374,6 @@ def editItem(item_id):
     else:
         categories = session.query(Category).all()
         return render_template('editItem.html', item=editedItem, categories=categories)
-
-def deleteEmptyCategory(category_id):
-    """
-    Checks to see if a category has any items in it.
-    If not, category is deleted
-    """
-    print "In delete empty category"
-    # following will return None if no results are found
-    categoryItems = session.query(Item).filter_by(category_id=category_id).first()
-    if not categoryItems:
-        # no items in this category, so delete it!
-        categoryToDelete = session.query(Category).filter_by(id=category_id).one()
-        session.delete(categoryToDelete)
-        session.commit()
-        flash("Category %s was removed" % categoryToDelete.name)
-        return "Category deleted"
-    else:
-        # category still has items
-        return "Category was not deleted. It still contains items."
 
 @app.route('/admin/<int:item_id>/delete/', methods=['GET', 'POST'])
 def deleteItem(item_id):

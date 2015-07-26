@@ -48,6 +48,9 @@
           </li>
           <li>
             <button>Submit</button>
+            <a href="{{ url_for('showItem', category_name=item.category.name, item_id=item.id) }}">
+              <input type="button" value="Cancel" class="btn-warning"/>
+            </a>
           </li>
         </ul>
       </form>
