@@ -27,7 +27,7 @@ items. To run, from the command line run: `python lotsofitems.py`
 On all pages, clicking the page title in the banner will redirect the site to the home page.
 On normal user pages (ie. not including admin pages or login page) you will find:
 * On the left you will see a list of categories. Clicking a category will navigate
-  to that categories page
+  to that category's page
 * Below the list of categories you will find the 'Login' button (if not already logged
   in). Click to go to the login page.
 * If you are already logged in, below the list of categories you will see a 'Logout'
@@ -35,8 +35,7 @@ On normal user pages (ie. not including admin pages or login page) you will find
   while the 'Add Item' button is used to navigate to the add item form.
 
 ####Front Page (`/` or `catalog/`)
-  * The front page you see initially will display the last 7 items added to the
-    catalog in descending order.
+  * The front page displays the last 7 items added to the catalog in descending order.
   * Clicking anywhere on the item preview will navigate to the item's main page.
 
 ####Category Page (`catalog/<category_name>/`)
@@ -53,12 +52,12 @@ On normal user pages (ie. not including admin pages or login page) you will find
     The 'Delete Item' button directs the user to a confirmation page.
 
 ###Loginng In and Out
-1. From the login page (`login/`), the user has the option to login using their Google account. Just click
-   the 'g+ Sign In' button click 'Accept' on the Google confirmation pop-up.
+1. From the login page (`login/`), the user has the option to login using their Google account. Just
+   click the 'g+ Sign In' button and then click 'Accept' on the Google confirmation pop-up.
 2. After a few moments, if login was successful, you will see a confirmation message with your name and
    Google profile picture, before the browser automatically redirects to the front page.
-3. In order to log back out, just hit the log out button. After successfully logging out, the browser will
-   automatically redirect to the front page.
+3. In order to log back out, just hit the 'Logout' button in the left side-bar. After successfully
+   logging out, the browser will automatically redirect to the front page.
 
 ###CRUD Operations
 User must be logged in to perform any of the following CRUD operations.
@@ -68,10 +67,10 @@ User must be logged in to perform any of the following CRUD operations.
 2. Enter item details.
   * Name, price, and category are required. The form will not submit if they are blank.
   * Description will default to a blank string if user does not enter a description.
-  * Number available will default to 0 if no number is entered. The input field will Only
+  * Number available will default to 0 if no number is entered. The input field will only
     accept numbers greater than or equal to 0.
   * If image is left blank, a default 'no-image' image will be displayed when later viewing
-    item.
+    the item.
   * If an image is selected, you will see a thumbnail preview of that image.
   * Price must be in the format of valid Canadian or US currency. Commas can optionally be used
     for thousands, millions, etc. If cents are specified, two decimal places are required.
@@ -85,15 +84,15 @@ User must be logged in to perform any of the following CRUD operations.
   * The browser will redirect to the front page.
 
 ####Update Item
-1. Navigate to the item you wish to update, then click the 'Edit Item' button near the bottom of the
-   page. If you now the id of the item you wish to update, you can manually access the update page at
-   `admin/<item_id>/edit/`
+1. Navigate to the item you wish to update, then click the 'Edit Item' button near the bottom
+   of the page. If you now the id of the item you wish to update, you can manually access the
+   update page at `admin/<item_id>/edit/`.
 2. Current values for each field will be pre-populated in the form. Edit the items that need to be
    changed.
-   * The form acts exactly the same as the add item form.
-   * Upon submission, if the image was changed, the previous image will be deleted from the uploads
-     folder.
-   * After submission has completed, the user will be redirected to the item's page.
+  * The form acts exactly the same as the add item form.
+  * Upon submission, if the image was changed, the previous image will be deleted from the uploads
+    folder.
+  * After submission has completed, the user will be redirected to the item's page.
 
 ####Delete Item
 1. Navigate to the item you wish to delete, then click the 'Delete Item' button near the bottom of the
