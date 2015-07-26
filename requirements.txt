@@ -1,0 +1,6 @@
+Flask == 0.10.1.egg
+SQLAlchemy == 0.8.4.egg
+Werkzeug == 0.9.4.egg
+httplib2 == 0.9.1
+google_api_python_client == 1.4.1
+Requests == 2.7.0
