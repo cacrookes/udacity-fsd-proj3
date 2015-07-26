@@ -85,7 +85,7 @@ User must be logged in to perform any of the following CRUD operations.
 
 ####Update Item
 1. Navigate to the item you wish to update, then click the 'Edit Item' button near the bottom
-   of the page. If you now the id of the item you wish to update, you can manually access the
+   of the page. If you know the id of the item you wish to update, you can manually access the
    update page at `admin/<item_id>/edit/`.
 2. Current values for each field will be pre-populated in the form. Edit the items that need to be
    changed.
@@ -102,12 +102,12 @@ User must be logged in to perform any of the following CRUD operations.
   * Clicking delete will remove the item from the database. If the item had an image, the image will
     be deleted from the uploads directory.
   * A nonce value is used to protect from cross-site forgery attacks.
-  * After successfully deleting item, the browser will redirect to the front page.
+  * After successfully deleting an item, the browser will redirect to the front page.
 
 ###JSON Endpoint
 A JSON file containing all of the items in the database in each category is available at `catalog.json`
 from the root directory.
 
 ###ATOM Feed
-At ATOM feed containing the most recently added items can be found at `recent_items.atom` from the root
+An ATOM feed containing the most recently added items can be found at `recent_items.atom` from the root
 directory.
