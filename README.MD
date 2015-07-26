@@ -99,6 +99,8 @@ User must be logged in to perform any of the following CRUD operations.
   * The form acts exactly the same as the add item form.
   * Upon submission, if the image was changed, the previous image will be deleted from the uploads
     folder.
+  * If the category was changed, the app will check if the previous category is now empty. If so,
+    the empty category will be deleted.
   * After submission has completed, the user will be redirected to the item's page.
 
 ####Delete Item
@@ -108,6 +110,7 @@ User must be logged in to perform any of the following CRUD operations.
   * If you change your mind, you can click the 'Cancel' button to navigate back to the item's page
   * Clicking delete will remove the item from the database. If the item had an image, the image will
     be deleted from the uploads directory.
+  * If the deleted item's category is now empty, the category will also be deleted.
   * A nonce value is used to protect from cross-site forgery attacks.
   * After successfully deleting an item, the browser will redirect to the front page.
 
