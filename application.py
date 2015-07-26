@@ -28,8 +28,11 @@ Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
 
-# checks to see if a category already exists. If not, category is added. Returns category id.
 def categoryCheck(category_name):
+    """
+    Checks to see if a category already exists.
+    If not, category is added. Returns category id.
+    """
     if session.query(Category).filter_by(name=category_name).count():
         # category already exists
         return session.query(Category).filter_by(name=category_name).one().id
@@ -42,13 +45,17 @@ def categoryCheck(category_name):
         # get id of new category
         return session.query(Category).filter_by(name=category_name).one().id
 
-# create an absolute url for external services.
 def external_url(url):
+    """
+    Creates an absolute url for external services.
+    """
     return urljoin(request.url_root, url)
 
-# JSON endpoint to serve JSON data
 @app.route('/catalog.json')
 def catalogJSON():
+    """
+    JSON endpoint to serve JSON data
+    """
     categories = []
     category_objects = session.query(Category).all()
     # go through each category, and build an object for each category, including
@@ -66,9 +73,12 @@ def catalogJSON():
     }
     return jsonify(catalog)
 
-# Atom Feed to return list of the most recently added items
+
 @app.route('/recent_items.atom')
 def atom_feed():
+    """
+    Atom Feed to return list of the most recently added items
+    """
     feed = AtomFeed('Newest Items at The Hockey Shop', feed_url=request.url, url=request.url_root)
     items = session.query(Item).order_by(Item.date_added.desc()).limit(20).all()
     for item in items:
@@ -79,17 +89,21 @@ def atom_feed():
                  updated=item.date_added)
     return feed.get_response()
 
-# Create a state token to prevent request forgery.
-# Store it in the session for later validation
 @app.route('/login')
 def showLogin():
+    """
+    Create a state token to prevent request forgery.
+    Store it in the session for later validation
+    """
     state = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in xrange(32))
     login_session['state'] = state
     return render_template('login.html', STATE=state)
 
-# Connect to the google oauth2 service for user authentication
 @app.route('/gconnect', methods=['POST'])
 def gconnect():
+    """
+    Connect to the google oauth2 service for user authentication
+    """
     # Validate state token
     if request.args.get('state') != login_session['state']:
         response = make_response(json.dumps('Invalid state parameter.'), 401)
@@ -170,8 +184,11 @@ def gconnect():
     flash("You are now logged in as %s" % login_session['username'])
     return output
 
-# handles clean-up from logging out user
+
 def logoutCleanup():
+    """
+    handles clean-up from logging out user
+    """
     # Reset the user's sesson.
     del login_session['credentials']
     del login_session['gplus_id']
@@ -184,9 +201,11 @@ def logoutCleanup():
     flash("You have been successfully disconnected.")
     return redirect(url_for('mainPage'))
 
-# DISCONNECT - Revoke a current user's token and reset their login_session
 @app.route('/gdisconnect')
 def gdisconnect():
+    """
+    Revoke a current user's Google oauth2 token and resets their login_session
+    """
     # Only disconnect a connected user.
     credentials = login_session.get('credentials')
     if credentials is None:
@@ -206,38 +225,46 @@ def gdisconnect():
         # the user.
         if (datetime.now() - login_session['logintime']) > timedelta(seconds=login_session['access_length']):
             return logoutCleanup()
-        
+
         # For whatever reason, the given token was invalid.
         response = make_response(json.dumps('Failed to revoke token for given user.', 400))
         response.headers['Content-Type'] = 'application/json'
         return response
 
-# Home page, listing newest items and categories for navigation
 @app.route('/catalog/')
 @app.route('/')
 def mainPage():
+    """
+    Home page, listing newest items and categories for navigation
+    """
     categories = session.query(Category).all()
     items = session.query(Item).order_by(Item.date_added.desc()).limit(7)
     return render_template('main.html', categories=categories, items=items)
 
-# List all the items available in the category
 @app.route('/catalog/<category_name>/')
 def showCategory(category_name):
+    """
+    List all the items available in the category
+    """
     category = session.query(Category).filter_by(name=category_name).one()
     items = session.query(Item).filter_by(category_id = category.id).all()
     categories = session.query(Category).all()
     return render_template('category.html', items=items, category=category_name, categories=categories)
 
-# List details for given item
 @app.route('/catalog/<category_name>/<int:item_id>/')
 def showItem(category_name, item_id):
+    """
+    List details for given item
+    """
     item = session.query(Item).filter_by(id = item_id).one()
     categories = session.query(Category).all()
     return render_template('item.html', item=item, categories=categories)
 
-# Form for adding a new item
 @app.route('/admin/additem/', methods=['GET', 'POST'])
 def newItem():
+    """
+    Form for adding a new item
+    """
     # Check to make sure user is authorized to add item
     if 'username' not in login_session:
         return redirect('/login')
@@ -271,9 +298,11 @@ def newItem():
         categories = session.query(Category).all()
         return render_template('addItem.html', categories=categories)
 
-# Form for updating the specified item
 @app.route('/admin/<int:item_id>/edit/', methods=['GET', 'POST'])
 def editItem(item_id):
+    """
+    Form for updating the specified item
+    """
     # Check to make sure user is authorized to edit item
     if 'username' not in login_session:
         return redirect('login')
@@ -314,9 +343,29 @@ def editItem(item_id):
         categories = session.query(Category).all()
         return render_template('editItem.html', item=editedItem, categories=categories)
 
-# Confirmation page for deleting a specified item
+def deleteEmptyCategory(category_id):
+    """
+    Checks to see if a category has any items in it.
+    If not, category is deleted
+    """
+    # following will return None if no results are found
+    categoryItems = session.query(Item).filter_by(category_id=category_id).first()
+    if not categoryItems:
+        # no items in this category, so delete it!
+        categoryToDelete = session.query(Item).filter_by(id=category_id).one()
+        session.delete(categoryToDelete)
+        session.commit()
+        flash("Category %s was removed" %s categoryToDelete.name)
+        return "Category deleted"
+    else:
+        # category still has items
+        return "Category was not deleted. It still contains items."
+
 @app.route('/admin/<int:item_id>/delete/', methods=['GET', 'POST'])
 def deleteItem(item_id):
+    """
+    Confirmation page for deleting a specified item
+    """
     # Check to make sure user is authorized to delete item
     if 'username' not in login_session:
         return redirect('login')
@@ -332,6 +381,9 @@ def deleteItem(item_id):
             os.remove(os.path.join(UPLOADS_FOLDER, itemToDelete.image))
         session.delete(itemToDelete)
         session.commit()
+        # Check to see if the deleted item's category contains other items.
+        # If not, delete the category.
+        deleteEmptyCategory(itemToDelete.category_id)
         flash("Successfully delete %s" % itemToDelete.name)
         return redirect(url_for('mainPage'))
     else:
@@ -341,6 +393,9 @@ def deleteItem(item_id):
 
 @app.route('/uploads/<filename>')
 def uploaded_file(filename):
+    """
+    Returns url for a file in the uploads folder
+    """
     return send_from_directory('uploads/', filename)
 
 if __name__ == '__main__':
