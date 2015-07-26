@@ -53,57 +53,57 @@ On normal user pages (ie. not including admin pages or login page) you will find
     The 'Delete Item' button directs the user to a confirmation page.
 
 ###Loginng In and Out
-  1. From the login page (`login/`), the user has the option to login using their Google account. Just click
-     the 'g+ Sign In' button click 'Accept' on the Google confirmation pop-up.
-  2. After a few moments, if login was successful, you will see a confirmation message with your name and
-     Google profile picture, before the browser automatically redirects to the front page.
-  3. In order to log back out, just hit the log out button. After successfully logging out, the browser will
-     automatically redirect to the front page.
+1. From the login page (`login/`), the user has the option to login using their Google account. Just click
+   the 'g+ Sign In' button click 'Accept' on the Google confirmation pop-up.
+2. After a few moments, if login was successful, you will see a confirmation message with your name and
+   Google profile picture, before the browser automatically redirects to the front page.
+3. In order to log back out, just hit the log out button. After successfully logging out, the browser will
+   automatically redirect to the front page.
 
 ###CRUD Operations
 User must be logged in to perform any of the following CRUD operations.
 
 ####Create (Add Item)
-   1. Click the 'Add Item' button on the left side bar, or navigate to `admin/additem/`
-   2. Enter item details.
-      * Name, price, and category are required. The form will not submit if they are blank.
-      * Description will default to a blank string if user does not enter a description.
-      * Number available will default to 0 if no number is entered. The input field will Only
-        accept numbers greater than or equal to 0.
-      * If image is left blank, a default 'no-image' image will be displayed when later viewing
-        item.
-      * If an image is selected, you will see a thumbnail preview of that image.
-      * Price must be in the format of valid Canadian or US currency. Commas can optionally be used
-        for thousands, millions, etc. If cents are specified, two decimal places are required.
-      * In category, a pull down list of existing categories are available. The user can select one
-        of these categories, or type in a new category name. It the latter case, a new category will
-        be created and stored in the database. This category will subsequently appear in the category
-        list in the left side-bar.
-      * Click submit. The form will be submitted, the item will be created and stored in the database
-        (along with a new category if necessary). If an image was selected, it will be uploaded to the
-        uploads folder.
-      * The browser will redirect to the front page.
+1. Click the 'Add Item' button on the left side bar, or navigate to `admin/additem/`
+2. Enter item details.
+  * Name, price, and category are required. The form will not submit if they are blank.
+  * Description will default to a blank string if user does not enter a description.
+  * Number available will default to 0 if no number is entered. The input field will Only
+    accept numbers greater than or equal to 0.
+  * If image is left blank, a default 'no-image' image will be displayed when later viewing
+    item.
+  * If an image is selected, you will see a thumbnail preview of that image.
+  * Price must be in the format of valid Canadian or US currency. Commas can optionally be used
+    for thousands, millions, etc. If cents are specified, two decimal places are required.
+  * In category, a pull down list of existing categories are available. The user can select one
+    of these categories, or type in a new category name. It the latter case, a new category will
+    be created and stored in the database. This category will subsequently appear in the category
+    list in the left side-bar.
+  * Click submit. The form will be submitted, the item will be created and stored in the database
+    (along with a new category if necessary). If an image was selected, it will be uploaded to the
+    uploads folder.
+  * The browser will redirect to the front page.
 
 ####Update Item
-    1. Navigate to the item you wish to update, then click the 'Edit Item' button near the bottom of the
-       page. If you now the id of the item you wish to update, you can manually access the update page at
-       `admin/<item_id>/edit/`
-    2. Current values for each field will be pre-populated in the form. Edit the items that need to be
-       changed.
-       * The form acts exactly the same as the add item form.
-       * Upon submission, if the image was changed, the previous image will be deleted from the uploads
-         folder.
-       * After submission has completed, the user will be redirected to the item's page.
+1. Navigate to the item you wish to update, then click the 'Edit Item' button near the bottom of the
+   page. If you now the id of the item you wish to update, you can manually access the update page at
+   `admin/<item_id>/edit/`
+2. Current values for each field will be pre-populated in the form. Edit the items that need to be
+   changed.
+   * The form acts exactly the same as the add item form.
+   * Upon submission, if the image was changed, the previous image will be deleted from the uploads
+     folder.
+   * After submission has completed, the user will be redirected to the item's page.
 
 ####Delete Item
-    1. Navigate to the item you wish to delete, then click the 'Delete Item' button near the bottom of the
-       page.
-    2. From the confirmation screen, click 'Delete Item' to delete the item.
-       * If you change your mind, you can click the 'Cancel' button to navigate back to the item's page
-       * Clicking delete will remove the item from the database. If the item had an image, the image will
-         be deleted from the uploads directory.
-       * A nonce value is used to protect from cross-site forgery attacks.
-       * After successfully deleting item, the browser will redirect to the front page.
+1. Navigate to the item you wish to delete, then click the 'Delete Item' button near the bottom of the
+  page.
+2. From the confirmation screen, click 'Delete Item' to delete the item.
+  * If you change your mind, you can click the 'Cancel' button to navigate back to the item's page
+  * Clicking delete will remove the item from the database. If the item had an image, the image will
+    be deleted from the uploads directory.
+  * A nonce value is used to protect from cross-site forgery attacks.
+  * After successfully deleting item, the browser will redirect to the front page.
 
 ###JSON Endpoint
 A JSON file containing all of the items in the database in each category is available at `catalog.json`
