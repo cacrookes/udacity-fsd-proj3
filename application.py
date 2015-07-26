@@ -42,6 +42,7 @@ def categoryCheck(category_name):
         session.add(newCategory)
         session.commit()
 
+        flash("Category %s created" % category_name)
         # get id of new category
         return session.query(Category).filter_by(name=category_name).one().id
 
@@ -308,7 +309,9 @@ def editItem(item_id):
         return redirect('login')
     editedItem = session.query(Item).filter_by(id=item_id).one()
     if request.method == 'POST':
-
+        # cat_changed will store if category of item has changed or not.
+        cat_changed = False
+        old_cat_id = editedItem.category_id
         if request.form['name']:
             editedItem.name = request.form['name']
         if request.form['description']:
@@ -320,7 +323,12 @@ def editItem(item_id):
         if request.form['numAvail']:
             editedItem.num_avail = request.form['numAvail']
         if request.form['category']:
-            # Check if category exists. If not, add it to the database. Get category id.
+            # if the item's category was changed, make note.
+            # After we update the item, we will check if the old category still has items
+            # in it. If not, remove the category.
+            if editedItem.category.name != request.form['category']:
+                cat_changed = True
+            # Check if new category exists. If not, add it to the database. Get category id.
             editedItem.category_id = categoryCheck(request.form['category'])
 
         # Upload the image and get filename
@@ -337,6 +345,11 @@ def editItem(item_id):
 
         session.add(editedItem)
         session.commit()
+        # if the category was changed, check if old category still has items in it.
+        # if not, delete the category
+        if cat_changed:
+            deleteEmptyCategory(old_cat_id)
+
         flash("Successfully updated %s" % editedItem.name)
         return redirect(url_for('showItem', category_name=editedItem.category.name, item_id=item_id))
     else:
@@ -348,14 +361,15 @@ def deleteEmptyCategory(category_id):
     Checks to see if a category has any items in it.
     If not, category is deleted
     """
+    print "In delete empty category"
     # following will return None if no results are found
     categoryItems = session.query(Item).filter_by(category_id=category_id).first()
     if not categoryItems:
         # no items in this category, so delete it!
-        categoryToDelete = session.query(Item).filter_by(id=category_id).one()
+        categoryToDelete = session.query(Category).filter_by(id=category_id).one()
         session.delete(categoryToDelete)
         session.commit()
-        flash("Category %s was removed" %s categoryToDelete.name)
+        flash("Category %s was removed" % categoryToDelete.name)
         return "Category deleted"
     else:
         # category still has items
