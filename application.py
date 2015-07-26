@@ -170,6 +170,20 @@ def gconnect():
     flash("You are now logged in as %s" % login_session['username'])
     return output
 
+# handles clean-up from logging out user
+def logoutCleanup():
+    # Reset the user's sesson.
+    del login_session['credentials']
+    del login_session['gplus_id']
+    del login_session['username']
+    del login_session['email']
+    del login_session['picture']
+    del login_session['logintime']
+    del login_session['access_length']
+
+    flash("You have been successfully disconnected.")
+    return redirect(url_for('mainPage'))
+
 # DISCONNECT - Revoke a current user's token and reset their login_session
 @app.route('/gdisconnect')
 def gdisconnect():
@@ -185,21 +199,14 @@ def gdisconnect():
     result = h.request(url, 'GET')[0]
 
     if result['status'] == '200':
-        # Reset the user's sesson.
-        del login_session['credentials']
-        del login_session['gplus_id']
-        del login_session['username']
-        del login_session['email']
-        del login_session['picture']
-        del login_session['logintime']
-        del login_session['access_length']
-
-        flash("You have been successfully disconnected.")
-        return redirect("/")
+        return logoutCleanup()
     else:
-        print result
-        if (datetime.now() - login_session['logintime']) > time(seconds=login_session['access_length']):
-            print "Token has already expired"
+        # Check to see if the access token has expired. This would cause an error when
+        # trying to revoke it since its already revoked. In this case, we can safely logout
+        # the user.
+        if (datetime.now() - login_session['logintime']) > timedelta(seconds=login_session['access_length']):
+            return logoutCleanup()
+        
         # For whatever reason, the given token was invalid.
         response = make_response(json.dumps('Failed to revoke token for given user.', 400))
         response.headers['Content-Type'] = 'application/json'
